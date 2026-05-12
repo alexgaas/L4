@@ -1,0 +1,51 @@
+name: l4
+services:
+  balancer:
+    build:
+      context: balancer
+    container_name: balancer
+    ports:
+      - "8443:8443"
+    networks:
+      - l4
+
+  upd-server-1:
+    build:
+      context: udp-server-1
+    container_name: udp-server
+    ports:
+      - "1443:1443"
+    networks:
+      - l4
+
+  upd-server-2:
+    build:
+      context: udp-server-2
+    container_name: udp-server
+    ports:
+      - "2443:2443"
+    networks:
+      - l4
+
+  upd-server-3:
+    build:
+      context: udp-server-3
+    container_name: udp-server
+    ports:
+      - "3443:3443"
+    networks:
+      - l4
+
+  zookeeper:
+    image: zookeeper:3.9
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+    volumes:
+      - ./data:/data
+      - ./datalog:/datalog
+
+networks:
+  l4:
