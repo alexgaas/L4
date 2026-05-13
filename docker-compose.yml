@@ -2,39 +2,41 @@ name: l4
 services:
   balancer:
     build:
-      context: balancer
+      context: ./balancer
     container_name: balancer
+    privileged: true # Required for RAW sockets
+    volumes:
+      - ./balancer/config_docker.yaml:/root/config.yaml
     ports:
+      - "2050:2050/udp"
       - "8443:8443"
     networks:
-      - l4
+      - l4_net
 
-  upd-server-1:
+  server1:
     build:
-      context: udp-server-1
-    container_name: udp-server
-    ports:
-      - "1443:1443"
+      context: ./scripts/server
+    container_name: server1
+    command: ["2054"]
     networks:
-      - l4
+      - l4_net
 
-  upd-server-2:
+  server2:
     build:
-      context: udp-server-2
-    container_name: udp-server
-    ports:
-      - "2443:2443"
+      context: ./scripts/server
+    container_name: server2
+    command: ["2054"]
     networks:
-      - l4
+      - l4_net
 
-  upd-server-3:
+  server3:
     build:
-      context: udp-server-3
-    container_name: udp-server
-    ports:
-      - "3443:3443"
+      context: ./scripts/server
+    container_name: server3
+    command: ["2054"]
     networks:
-      - l4
+      - l4_net
 
 networks:
-  l4:
+  l4_net:
+    driver: bridge

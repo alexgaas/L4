@@ -168,9 +168,9 @@ func StartUDPListener(stopChan chan interface{}, wg *sync.WaitGroup, addr string
 
 		var socket *PlainUDPSocket
 		if isIPv6 {
-			socket = plainSocket.v6
+			socket = listenSocket.v6
 		} else {
-			socket = plainSocket.v4
+			socket = listenSocket.v4
 		}
 
 		var buffer [util.MaxReadFrames]RecvMmsgData
@@ -197,7 +197,7 @@ func StartUDPListener(stopChan chan interface{}, wg *sync.WaitGroup, addr string
 		for {
 			select {
 			case <-stopChan:
-				plainSocket.Close()
+				listenSocket.Close()
 				return
 			default:
 			}

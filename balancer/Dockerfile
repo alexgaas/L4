@@ -1,30 +1,31 @@
 # Stage 1: Builder
-# Use a full Go image for building the application
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
+# Copy dependency files
 COPY go.mod go.sum ./
-COPY vendor/ vendor/
-COPY certs/ certs/
-# RUN go mod download
+RUN go mod download
 
+# Copy source code
 COPY . .
 
-# Build the Go application as a static executable
-RUN go build -o l4 .
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o balancer main.go
 
-# if you need to debug arm64 specific code
-# CMD ["tail", "-f", "/dev/null"]
+# Stage 2: Runtime
+FROM alpine:latest
 
-# Stage 2: Production
-FROM scratch
+WORKDIR /root/
 
-WORKDIR /
+# Copy the binary from the builder
+COPY --from=builder /app/balancer .
+# Copy default config just in case
+COPY config.yaml .
 
-COPY --from=builder /app/certs certs/
-COPY --from=builder /app/quoter .
+EXPOSE 2050 8443
 
-EXPOSE 8443
-
-CMD ["./l4", "", ""]
+# The balancer needs to be run as root to use RAW sockets, 
+# which is the default in Docker.
+ENTRYPOINT ["./balancer"]
+CMD ["-config", "config.yaml"]

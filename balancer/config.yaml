@@ -6,11 +6,17 @@ servers:
           addr: '127.0.0.1:2054'
           preserve_src_addr: true
           fake_src_ipv4_addr: '95.108.254.95'
+          uuid: 'backend-1'
+          weight: 1.0
       - backend:
           addr: '127.0.0.1:2055'
           preserve_src_addr: true
           fake_src_ipv4_addr: '95.108.254.95'
+          uuid: 'backend-2'
+          weight: 1.0
       - backend:
           addr: '127.0.0.1:2056'
           preserve_src_addr: true
           fake_src_ipv4_addr: '95.108.254.95'
+          uuid: 'backend-3'
+          weight: 1.0

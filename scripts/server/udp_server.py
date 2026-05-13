@@ -2,8 +2,23 @@
 
 import socket
 import argparse
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-def start_server(port):
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+    def log_message(self, format, *args):
+        return
+
+def start_http_server(port):
+    server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+    print(f"Starting HTTP health check server on port {port}")
+    server.serve_forever()
+
+def start_udp_server(port):
     # Create a UDP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
@@ -22,8 +37,13 @@ def start_server(port):
             print(f"Received {len(data)} bytes from {address} (binary data)", flush=True)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Simple UDP Server")
-    parser.add_argument("port", type=int, help="Port to listen on")
+    parser = argparse.ArgumentParser(description="UDP Server with HTTP Health Check")
+    parser.add_argument("port", type=int, help="UDP port to listen on")
+    parser.add_argument("--http-port", type=int, default=8080, help="HTTP health check port (default: 8080)")
     args = parser.parse_args()
     
-    start_server(args.port)
+    # Start HTTP server in a separate thread
+    http_thread = threading.Thread(target=start_http_server, args=(args.http_port,), daemon=True)
+    http_thread.start()
+    
+    start_udp_server(args.port)
