@@ -107,7 +107,7 @@ func (b *Balancer) Enqueue(messages []io.RecvMmsgData, cnt int, isIPv6 bool) {
 
 	// All goroutines have their own copy of backends.
 	// It's safe to update weights here because all work is done.
-	// No concurrent operations could occurs here.
+	// No concurrent operations could occur here.
 	if markUpdate {
 		for k := range b.Backends {
 			if b.Backends[k].Weight != b.Backends[k].NewWeight.Load() {

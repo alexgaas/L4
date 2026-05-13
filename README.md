@@ -88,6 +88,25 @@ Received 14 bytes from ('127.0.0.1', <client_port>): Hello Balancer
 
 ----
 
+### Tags
+- **Golang** 1.25
+- **epoll** support for **linux**, **kqueue** for **darwin**
+- Tested manually on **MacOS** (darwin), within a Docker (Docker Desktop for a Mac) on the **linux**
+- Built with Jetbrains **Goland** IDE
+
+### References
+- L7 load balancer as an initial source for a balancing algorithms - https://github.com/alexgaas/L7
+- Priority queue (based on examples from): https://golang.org/pkg/container/heap/
+- EDF implementation: https://en.wikipedia.org/wiki/Earliest_deadline_first_scheduling
+
+----
+
+### Docker-based manual test (linux) 
+
+IN PROGRESS
+
+----
+
 ### NOTE - how to troubleshoot OS-specific low-level network issues with tcpdump
 
 To troubleshoot the packet delivery issue, I used **tcpdump** to perform low-level packet inspection on the _loopback_ **(lo0)** and _physical_ **(en0)** interfaces. 
