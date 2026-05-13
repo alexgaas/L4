@@ -17,9 +17,9 @@ def start_server(port):
         
         try:
             text = data.decode('utf-8')
-            print(f"Received {len(data)} bytes from {address}: {text}")
+            print(f"Received {len(data)} bytes from {address}: {text}", flush=True)
         except UnicodeDecodeError:
-            print(f"Received {len(data)} bytes from {address} (binary data)")
+            print(f"Received {len(data)} bytes from {address} (binary data)", flush=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simple UDP Server")

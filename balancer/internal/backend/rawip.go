@@ -171,6 +171,20 @@ func PrepareIPUDP(dst *SendMMsgData, src *io.RecvMmsgData, b *HostSpecificInfo, 
 		}
 
 		copy(dst.Data[offset:], IPv4Header)
+		
+		// Darwin/BSD quirks:
+		// 1. ip_len must be in host byte order.
+		totalLen := uint16(20 + 8 + src.DataLen)
+		binary.LittleEndian.PutUint16(dst.Data[offset+2:offset+4], totalLen)
+		
+		// 2. ip_id should be in network byte order (big-endian).
+		binary.BigEndian.PutUint16(dst.Data[offset+4:offset+6], 0x1234)
+
+		// 3. ip_off must be in host byte order.
+		// IPv4Header has 0x4000 at offset 6 (DF bit set). 
+		// In host byte order (LE) this is 0x0040.
+		binary.LittleEndian.PutUint16(dst.Data[offset+6:offset+8], 0x4000)
+
 		offset += len(IPv4Header)
 
 		var addr *syscall.RawSockaddrInet4

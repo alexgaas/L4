@@ -119,8 +119,8 @@ func (b *Backend) Enqueue(message []io.RecvMmsgData, cnt int, isIPv6 bool) {
 		b.Buffer[i].DataLen = 0
 	}
 
-	n, err := io.SendMMsg(b.Host.Fd, b.Mmsgs[:], cnt)
-	if n < 0 && err != nil {
+	_, err := io.SendMMsg(b.Host.Fd, b.Mmsgs[:], cnt)
+	if err != nil {
 		Log.Error("Error sending data to backend", log.Any("backend", b.Host.Addr), log.Error(err))
 	}
 }
@@ -258,11 +258,13 @@ func CreateHostSpecificInfo(addr string, isIPv6Only bool, fakeBackend string) (*
 func rawSocketAnyToInet4Pointer(sa *syscall.RawSockaddrAny) (unsafe.Pointer, uint32) {
 	addr := (*syscall.RawSockaddrInet4)(unsafe.Pointer(sa))
 	addr.Family = syscall.AF_INET
+	addr.Len = syscall.SizeofSockaddrInet4
 	return unsafe.Pointer(sa), syscall.SizeofSockaddrInet4
 }
 
 func rawSocketAnyToInet6Pointer(sa *syscall.RawSockaddrAny) (unsafe.Pointer, uint32) {
 	addr := (*syscall.RawSockaddrInet6)(unsafe.Pointer(sa))
 	addr.Family = syscall.AF_INET6
+	addr.Len = syscall.SizeofSockaddrInet6
 	return unsafe.Pointer(sa), syscall.SizeofSockaddrInet6
 }
