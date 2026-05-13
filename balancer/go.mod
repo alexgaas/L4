@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/go-chi/chi/v5 v5.2.5
-	github.com/go-zookeeper/zk v1.0.4
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/google/go-cmp v0.7.0
 	github.com/mitchellh/copystructure v1.2.0

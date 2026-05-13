@@ -7,8 +7,7 @@ import (
 )
 
 type Config struct {
-	StatusPort int      `yaml:"status_port"`
-	ZkServers  []string `yaml:"zk_servers"`
+	StatusPort int `yaml:"status_port"`
 	Servers    []ConfigServer
 }
 

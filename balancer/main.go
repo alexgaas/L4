@@ -8,7 +8,6 @@ import (
 	"balancer/internal/io"
 	"balancer/internal/log"
 	"balancer/internal/log/zap"
-	"balancer/internal/state"
 	"balancer/internal/util"
 	"flag"
 	"fmt"
@@ -26,8 +25,7 @@ var (
 	weightsFile    = flag.String("weights-file", "weights", "weights file")
 	weightsTimeout = flag.Int("weights-timeout", 10, "weights file read timeout in seconds")
 	bufferSize     = flag.Int("buffer-size", 100, "sendmmsg ring buffer size")
-	//bufferTimeout  = flag.Duration("buffer-timeout", 10*time.Second, "sendmmsg ring buffer timeout")
-	verbose = flag.Bool("verbose", false, "additional logging")
+	verbose        = flag.Bool("verbose", false, "additional logging")
 )
 
 var Log = zap.Must(zp.Config{
@@ -54,7 +52,6 @@ func main() {
 	balancer.Log = Log
 	balancer.Log = Log
 	io.Log = Log
-	state.Log = Log
 
 	if *bufferSize > 1024 {
 		Log.Errorf("Buffer size is too big, using 1024")
@@ -70,26 +67,6 @@ func main() {
 	}
 	backendsChecker := balancer.NewChecker()
 	weightsChecker := balancer.NewWeightsChecker(*weightsFile, *weightsTimeout)
-
-	zkEnabled := false
-	var zkState *state.ZKState
-	if len(config.ZkServers) > 0 {
-		zkEnabled = true
-		zkState, err = state.NewZKState(config.ZkServers)
-		if err != nil {
-			Log.Fatal("Failed to init ZooKeeper", log.Error(err))
-		}
-
-		if err := zkState.Wait(); err != nil {
-			Log.Fatal("Failed to acquire leadership", log.Error(err))
-		}
-
-		// When the configuration is failed we need to close connection
-		// to ZooKeeper to clear ephemeral nodes. In normal case, the
-		// connection will be closed manually, defer will be never called
-		// because of the infinite loop of status goroutine.
-		defer zkState.Close()
-	}
 
 	balancerUUIDsMap := make(map[string]interface{})
 	for _, server := range config.Servers {
@@ -134,15 +111,8 @@ func main() {
 					balancerUUIDsMap[backendUUID] = true
 
 					var seed []byte
-					if zkEnabled && !emptyBackendUUID {
-						if err := zkState.GetSeed(backendUUID, &seed); err != nil {
-							Log.Fatal("Could not read seed from ZooKeeper", log.Any("uuid", backendUUID), log.Error(err))
-						}
-						Log.Info("Got seed from ZooKeeper", log.Any("uuid", backendUUID), log.Any("seed", seed))
-					} else {
-						Log.Info("Generating new seed", log.Any("uuid", backendUUID))
-						state.NewSeed(&seed)
-					}
+					Log.Info("Generating new seed", log.Any("uuid", backendUUID))
+					util.NewSeed(&seed)
 
 					if len(seed) == 0 {
 						Log.Fatal("Empty seed", log.Any("uuid", backendUUID))
@@ -232,11 +202,6 @@ func main() {
 	}
 
 	weightsChecker.Start(stopChan, wg)
-
-	if zkEnabled {
-		Log.Info("Disconnecting from ZooKeeper")
-		zkState.Close()
-	}
 
 	health.StartStatusServer(fmt.Sprint("[::]:", config.StatusPort), backendsChecker)
 

@@ -36,16 +36,5 @@ services:
     networks:
       - l4
 
-  zookeeper:
-    image: zookeeper:3.9
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOO_MY_ID: 1
-    volumes:
-      - ./data:/data
-      - ./datalog:/datalog
-
 networks:
   l4:
