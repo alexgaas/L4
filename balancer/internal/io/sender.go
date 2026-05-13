@@ -6,17 +6,17 @@ type Sender interface {
 	Copy() Sender
 }
 
-type Duplicator struct {
+type Broadcaster struct {
 	Senders []Sender
 }
 
-func (b *Duplicator) Enqueue(message []RecvMmsgData, cnt int, isIPv6 bool) {
+func (b *Broadcaster) Enqueue(message []RecvMmsgData, cnt int, isIPv6 bool) {
 	for _, sender := range b.Senders {
 		sender.Enqueue(message, cnt, isIPv6)
 	}
 }
 
-func (b *Duplicator) InitState() error {
+func (b *Broadcaster) InitState() error {
 	for _, sender := range b.Senders {
 		if err := sender.InitState(); err != nil {
 			return err
@@ -26,11 +26,11 @@ func (b *Duplicator) InitState() error {
 	return nil
 }
 
-func (b *Duplicator) Copy() Duplicator {
+func (b *Broadcaster) Copy() Broadcaster {
 	senders := make([]Sender, 0)
 	for _, sender := range b.Senders {
 		senders = append(senders, sender.Copy())
 	}
 
-	return Duplicator{Senders: senders}
+	return Broadcaster{Senders: senders}
 }

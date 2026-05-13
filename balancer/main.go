@@ -71,10 +71,10 @@ func main() {
 	balancerUUIDsMap := make(map[string]interface{})
 	for _, server := range config.Servers {
 
-		backendsGroup := io.Duplicator{}
-		backendsGroup.Senders = make([]io.Sender, len(server.Duplicator))
+		backendsGroup := io.Broadcaster{}
+		backendsGroup.Senders = make([]io.Sender, len(server.Broadcaster))
 
-		for i, v := range server.Duplicator {
+		for i, v := range server.Broadcaster {
 			// We have two types of receivers
 			// First is balancer
 			if v.Balancer != nil {

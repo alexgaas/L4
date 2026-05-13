@@ -1,7 +1,7 @@
 status_port: 8443
 servers:
   - port: 2050
-    duplicator:
+    broadcaster:
       - backend:
           addr: '127.0.0.1:2054'
           preserve_src_addr: true

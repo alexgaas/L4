@@ -153,7 +153,7 @@ func (t *PlainMultiSocket) Close() {
 	t.v6.Close()
 }
 
-func StartUDPListener(stopChan chan interface{}, wg *sync.WaitGroup, addr string, duplicator Duplicator, verbose bool) error {
+func StartUDPListener(stopChan chan interface{}, wg *sync.WaitGroup, addr string, broadcaster Broadcaster, verbose bool) error {
 	Log.Info("Udp server", log.Any("address", addr))
 	plainSocket, err := NewPlainMultiSocket(addr)
 	if err != nil {
@@ -163,7 +163,7 @@ func StartUDPListener(stopChan chan interface{}, wg *sync.WaitGroup, addr string
 	listen := func(isIPv6 bool) {
 		defer wg.Done()
 
-		backend := duplicator.Copy()
+		backend := broadcaster.Copy()
 
 		err = backend.InitState()
 		if err != nil {

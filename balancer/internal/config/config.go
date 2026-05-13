@@ -12,11 +12,11 @@ type Config struct {
 }
 
 type ConfigServer struct {
-	Port       int
-	Duplicator []ConfigDuplicator
+	Port        int
+	Broadcaster []ConfigBroadcaster
 }
 
-type ConfigDuplicator struct {
+type ConfigBroadcaster struct {
 	Balancer *ConfigBalancer
 	Backend  *ConfigBackend
 }
