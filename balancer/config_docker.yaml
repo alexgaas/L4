@@ -8,18 +8,15 @@ servers:
           fake_src_ipv4_addr: '95.108.254.95'
           uuid: 'backend-1'
           weight: 1.0
-          check_url: 'server1:8080/'
       - backend:
           addr: 'server2:2054'
           preserve_src_addr: true
           fake_src_ipv4_addr: '95.108.254.95'
           uuid: 'backend-2'
           weight: 1.0
-          check_url: 'server2:8080/'
       - backend:
           addr: 'server3:2054'
           preserve_src_addr: true
           fake_src_ipv4_addr: '95.108.254.95'
           uuid: 'backend-3'
           weight: 1.0
-          check_url: 'server3:8080/'

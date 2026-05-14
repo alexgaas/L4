@@ -8,7 +8,7 @@ The L4 Balancer is a high-performance UDP traffic management tool designed for t
 * Source IP Preservation: Leverages RAW sockets (SOCK_RAW) to maintain the original client’s IP address, ensuring backends see the true source of the traffic.
 
 **Key Technical Features**
-* Platform-Specific Optimization: Implements high-performance IO using kqueue on Darwin (macOS) and epoll with sendmmsg/recvmmsg on Linux for low-latency packet processing.
+* Platform-Specific Optimization: Implements high-performance IO using **kqueue** on Darwin and **epoll** with sendmmsg/recvmmsg on Linux for low-latency packet processing.
 * Health Monitoring: Includes an integrated health checker that monitors backend availability via HTTP and a status server for real-time monitoring.
 * Dynamic Weighting: Supports weight-based balancing with a "weights file" that allows for real-time traffic distribution adjustments without restarting the service.
 * Cross-Platform RAW Socket Handling: Features a custom network stack implementation that handles platform-specific IP header quirks (e.g., host vs. network byte order differences between Linux and BSD/Darwin).
@@ -88,6 +88,25 @@ Received 14 bytes from ('127.0.0.1', <client_port>): Hello Balancer
 
 ----
 
+### Docker-based manual test (linux) 
+
+To test the balancer and verify that traffic is being duplicated/broadcast to the backend servers, follow these steps:
+
+Run the command from the project root to build and start the balancer and three backend servers in the background:
+```shell
+docker compose up -d --build
+```
+Use the provided UDP client to send a message to the balancer (listening on port 2050):
+```python
+python3 scripts/client/udp_client.py --message "Hello L4 Balancer"
+```
+Check the logs of the backend servers. You should see "Hello L4 Balancer" received by all three servers (server1, server2, server3):
+```shell
+docker compose logs -f server1 server2 server3
+```
+
+----
+
 ### Tags
 - **Golang** 1.25
 - **epoll** support for **linux**, **kqueue** for **darwin**
@@ -98,12 +117,6 @@ Received 14 bytes from ('127.0.0.1', <client_port>): Hello Balancer
 - L7 load balancer as an initial source for a balancing algorithms - https://github.com/alexgaas/L7
 - Priority queue (based on examples from): https://golang.org/pkg/container/heap/
 - EDF implementation: https://en.wikipedia.org/wiki/Earliest_deadline_first_scheduling
-
-----
-
-### Docker-based manual test (linux) 
-
-IN PROGRESS
 
 ----
 
