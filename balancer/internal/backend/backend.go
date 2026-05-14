@@ -2,7 +2,7 @@ package backend
 
 import (
 	"balancer/internal/io"
-	"balancer/internal/log"
+	"github.com/alexgaas/underdog"
 	"balancer/internal/util"
 	"context"
 	"errors"

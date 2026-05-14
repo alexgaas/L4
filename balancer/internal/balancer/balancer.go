@@ -9,7 +9,7 @@ import (
 	"github.com/mitchellh/copystructure"
 	"go.uber.org/atomic"
 
-	"balancer/internal/log"
+	"github.com/alexgaas/underdog"
 )
 
 var Log log.Logger

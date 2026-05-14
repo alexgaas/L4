@@ -2,7 +2,7 @@ package health
 
 import (
 	"balancer/internal/balancer"
-	"balancer/internal/log"
+	"github.com/alexgaas/underdog"
 	"fmt"
 	"net/http"
 	"net/http/pprof"

@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"balancer/internal/log"
+	"github.com/alexgaas/underdog"
 )
 
 var Log log.Logger

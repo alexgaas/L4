@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"balancer/internal/log"
+	"github.com/alexgaas/underdog"
 )
 
 type WeightsChecker struct {

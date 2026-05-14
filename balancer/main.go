@@ -6,13 +6,14 @@ import (
 	appConfig "balancer/internal/config"
 	"balancer/internal/health"
 	"balancer/internal/io"
-	"balancer/internal/log"
-	"balancer/internal/log/zap"
 	"balancer/internal/util"
 	"flag"
 	"fmt"
 	"math"
 	"sync"
+
+	"github.com/alexgaas/underdog"
+	"github.com/alexgaas/underdog/zap"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/atomic"
