@@ -6,7 +6,7 @@ services:
     container_name: balancer
     privileged: true # Required for RAW sockets
     volumes:
-      - ./balancer/config_docker.yaml:/root/config.yaml
+      - ./balancer/configs/config_docker.yaml:/root/config.yaml
     ports:
       - "2050:2050/udp"
       - "8443:8443"

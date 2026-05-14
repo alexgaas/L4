@@ -48,9 +48,9 @@ backend-3 1.0
 
 
 **How it works:**
-* Startup: The balancer reads config.yaml and starts with the weights defined there.
-* Dynamic Update: When the balancer detects the weights file, it reads the new values and updates the internal routing table (e.g., in a Round Robin scenario, backend-1 will now receive 10x more traffic than backend-3).
-* No Restart Required: You can modify the balancer/weights file at any time to rebalance traffic on the fly.
+* Startup: The balancer reads configs/config.yaml and starts with the weights defined there.
+* Dynamic Update: When the balancer detects the configs/weights file, it reads the new values and updates the internal routing table (e.g., in a Round Robin scenario, backend-1 will now receive 10x more traffic than backend-3).
+* No Restart Required: You can modify the balancer/configs/weights file at any time to rebalance traffic on the fly.
 
 ----
 
@@ -71,7 +71,7 @@ python3 scripts/server/udp_server.py 2056
 
 #### Start the Balancer (requires root):
 ```shell
-sudo ./balancer/balancer -config balancer/config.yaml
+sudo ./balancer/balancer -config balancer/configs/config.yaml -weights-file balancer/configs/weights
 ```
 
 #### Send the message:

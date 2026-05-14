@@ -21,7 +21,7 @@ WORKDIR /root/
 # Copy the binary from the builder
 COPY --from=builder /app/balancer .
 # Copy default config just in case
-COPY config.yaml .
+COPY configs/config.yaml .
 
 EXPOSE 2050 8443
 
