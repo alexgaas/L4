@@ -2,18 +2,19 @@ package health
 
 import (
 	"balancer/internal/balancer"
-	"github.com/alexgaas/underdog"
 	"fmt"
 	"net/http"
 	"net/http/pprof"
 	"time"
 
+	"github.com/alexgaas/underdog"
+
 	"github.com/go-chi/chi/v5"
 )
 
 type StatusServerContext struct {
-	LastSlbCheckout time.Time
-	Checker         *balancer.Checker
+	LastCheckout time.Time
+	Checker      *balancer.Checker
 }
 
 func StartStatusServer(addr string, checker *balancer.Checker) {
@@ -29,7 +30,7 @@ func StartStatusServer(addr string, checker *balancer.Checker) {
 	r.Get("/backend_status", func(w http.ResponseWriter, r *http.Request) {
 		handlerBackendStatus(w, r, &statusCtx)
 	})
-	r.Get("/last_slb_checkout", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/last_checkout", func(w http.ResponseWriter, r *http.Request) {
 		handlerLast(w, r, &statusCtx)
 	})
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
@@ -58,14 +59,14 @@ func handlerDefault(w http.ResponseWriter, _ *http.Request) {
 }
 
 func handlerPing(w http.ResponseWriter, _ *http.Request, c *StatusServerContext) {
-	c.LastSlbCheckout = time.Now()
+	c.LastCheckout = time.Now()
 	if _, err := fmt.Fprintln(w, "ok"); err != nil {
 		balancer.Log.Error("handlerPing error", log.Error(err))
 	}
 }
 
 func handlerLast(w http.ResponseWriter, _ *http.Request, c *StatusServerContext) {
-	if _, err := fmt.Fprintln(w, "last_slb_checkout", c.LastSlbCheckout); err != nil {
+	if _, err := fmt.Fprintln(w, "last_checkout", c.LastCheckout); err != nil {
 		balancer.Log.Error("handlerLast error", log.Error(err))
 	}
 }
